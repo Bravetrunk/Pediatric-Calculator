@@ -1,387 +1,209 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Pediatrics Calculator</title>
-	<meta name="description" content="Pediatrics Calculator - คำนวณขนาดยาและสารน้ำสำหรับเด็ก">
-	<meta name="theme-color" content="#FFB6C1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pediatrics Calculator</title>
+<meta name="description" content="คำนวณขนาดยาและสารน้ำสำหรับเด็ก">
+<meta name="theme-color" content="#FF6663">
 
-	<!-- Favicon (SVG data URL) -->
-	<link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='20' r='12' fill='%23FFB6C1'/%3E%3Crect x='24' y='30' width='16' height='20' rx='6' fill='%2387CEEB'/%3E%3Ccircle cx='28' cy='16' r='2' fill='%23333'/%3E%3Ccircle cx='36' cy='16' r='2' fill='%23333'/%3E%3Cpath d='M28 22 Q32 26 36 22' fill='none' stroke='%23333' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='<http://www.w3.org/2000/svg>' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='20' r='12' fill='%23FF6663'/%3E%3Crect x='24' y='30' width='16' height='20' rx='6' fill='%23BFD7EA'/%3E%3Ccircle cx='28' cy='16' r='2' fill='%23333'/%3E%3Ccircle cx='36' cy='16' r='2' fill='%23333'/%3E%3Cpath d='M28 22 Q32 26 36 22' fill='none' stroke='%23333' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E">
 
-	<!-- Apple iOS icons (จะถูกตั้งค่าเป็น PNG data URL ตอนโหลดหน้า) -->
-	<link rel="apple-touch-icon" id="apple-icon-180" sizes="180x180" href="">
-	<link rel="apple-touch-icon" id="apple-icon-152" sizes="152x152" href="">
-	<link rel="apple-touch-icon" id="apple-icon-120" sizes="120x120" href="">
-	<link rel="apple-touch-icon" id="apple-icon-76" sizes="76x76" href="">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<meta name="apple-mobile-web-app-title" content="PedCalc">
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-	<!-- Manifest: จะถูกฉีดเข้ามาเป็น Blob URL ตอนโหลดหน้า -->
-	<link id="manifestLink" rel="manifest">
+<!-- Web App Manifest -->
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Pediatrics%20Calculator%22,%22short_name%22:%22PedCalc%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22theme_color%22:%22%23FF6663%22,%22background_color%22:%22%23FFFFFF%22}">
 
-	<style>
-		:root { --bg:#fff; --fg:#111; --accent:#FFB6C1; }
-		html,body { margin:0; padding:0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; background: var(--bg); color: var(--fg);}
-		.app { max-width: 1080px; margin: 0 auto; padding: 16px; }
-		.header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; }
-		.header-left { display:flex; align-items:center; gap:10px; }
-		.logo { width:28px; height:28px; color: var(--accent); }
-		h1 { font-size:20px; margin:0; }
-		.text-light { opacity:0.7; font-weight:500; }
-		.main { display:grid; grid-template-columns: 300px 1fr; gap:16px; }
-		@media (max-width: 900px){ .main { grid-template-columns: 1fr; } }
-		.section { background:#fff; border:1px solid #eee; border-radius:12px; padding:12px; }
-		.section-title { display:flex; align-items:center; gap:8px; margin:0 0 8px; font-size:16px; }
-		.section-icon { font-size:18px; }
-		.input, .select, .slider { width:100%; }
-		.form-row { display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
-		.form-compact { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; }
-		@media (max-width:600px){ .form-compact, .form-row { grid-template-columns:1fr; } }
-		.input-group { display:flex; align-items:center; border:1px solid #ddd; border-radius:10px; overflow:hidden; }
-		.input-group .input { border:0; padding:10px; outline:none; }
-		.input-addon { padding:0 10px; background:#fafafa; border-left:1px solid #eee; }
-		.helper-text { color:#666; }
-		.quick-grid { display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; }
-		.quick-btn { padding:8px; border:1px solid #eee; border-radius:10px; background:#fff; cursor:pointer; }
-		.iv-results { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:8px; }
-		.result-item { padding:10px; border:1px solid #eee; border-radius:10px; display:flex; flex-direction:column; gap:4px; }
-		.result-item.highlight { border-color: var(--accent); background: #FFF2F6; }
-		.result-label { font-size:12px; color:#666; }
-		.result-value { font-size:20px; font-weight:700; }
-		.result-unit { font-size:12px; color:#666; }
-		.status-info { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px; }
-		.btn-group { display:flex; gap:6px; }
-		.btn-sm { padding:6px 10px; border:1px solid #eee; background:#fff; border-radius:8px; cursor:pointer; }
-		.content-header { display:flex; align-items:center; justify-content:space-between; }
-		.content-title { display:flex; align-items:center; gap:8px; margin:0; }
-		.badge { background:#f5f5f5; padding:2px 8px; border-radius:999px; font-size:12px; }
-		.toast { position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:#111; color:#fff; padding:10px 14px; border-radius:10px; display:none; }
-	</style>
+<!-- Preload Font -->
+<link rel="preconnect" href="<https://fonts.googleapis.com>">
+<link rel="preconnect" href="<https://fonts.gstatic.com>" crossorigin>
+<link href="<https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap>" rel="stylesheet">
+
+<!-- Link to CSS file -->
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-	<div class="app">
-		<header class="header">
-			<div class="header-left">
-				<svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
-					<circle cx="32" cy="20" r="12" fill="currentColor" opacity="0.9"/>
-					<rect x="24" y="30" width="16" height="20" rx="6" fill="currentColor" opacity="0.7"/>
-					<circle cx="28" cy="16" r="2" fill="var(--bg)"/>
-					<circle cx="36" cy="16" r="2" fill="var(--bg)"/>
-					<path d="M28 22 Q32 26 36 22" fill="none" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/>
-				</svg>
-				<h1>Pediatrics <span class="text-light">Calculator</span></h1>
-			</div>
-		</header>
+<div class="app">
 
-		<main class="main">
-			<aside class="sidebar">
-				<section class="section">
-					<h2 class="section-title"><span class="section-icon">👶</span>ข้อมูลผู้ป่วย</h2>
-					<div class="form-row">
-						<div class="form-field">
-							<label>อายุ</label>
-							<div class="input-group">
-								<input type="number" id="ageMonths" value="12" min="0" class="input" aria-label="อายุเป็นเดือน">
-								<span class="input-addon">เดือน</span>
-							</div>
-							<small id="ageYears" class="helper-text">= 1 ปี</small>
-						</div>
-						<div class="form-field">
-							<label>น้ำหนัก</label>
-							<div class="input-group">
-								<input type="number" id="weight" value="10" min="2" max="60" step="0.5" class="input" aria-label="น้ำหนักกิโลกรัม">
-								<span class="input-addon">kg</span>
-							</div>
-							<input type="range" id="weightSlider" min="2" max="60" step="0.5" value="10" class="slider" aria-label="ปรับน้ำหนัก">
-						</div>
-					</div>
-					<div class="quick-grid">
-						<button class="quick-btn" data-weight="3.5" data-age="0">แรกเกิด</button>
-						<button class="quick-btn" data-weight="6" data-age="3">3ด</button>
-						<button class="quick-btn" data-weight="10" data-age="12">1ป</button>
-						<button class="quick-btn" data-weight="15" data-age="36">3ป</button>
-						<button class="quick-btn" data-weight="20" data-age="60">5ป</button>
-					</div>
-				</section>
+<!-- Header -->
+<header class="header">
+<div class="header-left">
+<svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+<circle cx="32" cy="20" r="12" fill="currentColor" opacity="0.9"/>
+<rect x="24" y="30" width="16" height="20" rx="6" fill="currentColor" opacity="0.7"/>
+<circle cx="28" cy="16" r="2" fill="var(--white)"/>
+<circle cx="36" cy="16" r="2" fill="var(--white)"/>
+<path d="M28 22 Q32 26 36 22" fill="none" stroke="var(--white)" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
+<h1>Pediatrics <span class="text-light">Calculator</span></h1>
+</div>
+<div class="header-right">
+<button class="btn-icon" id="fontSizeBtn" aria-label="เปลี่ยนขนาดตัวอักษร">📏</button>
+<button class="btn-icon" id="themeToggle" aria-label="เปลี่ยนธีม">🌙</button>
+<button class="btn-icon" id="settingsBtn" aria-label="การตั้งค่า">⚙️</button>
+</div>
+</header>
 
-				<section class="section">
-					<h2 class="section-title"><span class="section-icon">💧</span>IV Fluid</h2>
-					<div class="form-compact">
-						<div class="form-field">
-							<label>Type</label>
-							<select id="ivType" class="select" aria-label="ชนิดสารน้ำ">
-								<option value="NS">0.9% NaCl</option>
-								<option value="LR">LR</option>
-								<option value="D5W">D5W</option>
-								<option value="D5NS">D5NS</option>
-								<option value="D5-1/2NS">D5-½NS</option>
-							</select>
-						</div>
-						<div class="form-field">
-							<label>Deficit <span id="deficitValue" class="badge">0%</span></label>
-							<input type="range" id="deficitSlider" min="0" max="15" step="0.5" value="0" class="slider" aria-label="เปอร์เซ็นต์ขาดน้ำ">
-						</div>
-						<div class="form-field">
-							<label>ชดเชยใน</label>
-							<div class="input-group">
-								<input type="number" id="deficitHours" value="24" min="1" max="48" class="input" aria-label="ชั่วโมงชดเชย">
-								<span class="input-addon">hr</span>
-							</div>
-						</div>
-					</div>
-					<div class="iv-results" aria-live="polite">
-						<div class="result-item">
-							<span class="result-label">Maint</span>
-							<span class="result-value" id="maintRate">42</span>
-							<span class="result-unit">mL/hr</span>
-						</div>
-						<div class="result-item">
-							<span class="result-label">Deficit</span>
-							<span class="result-value" id="deficitRate">0</span>
-							<span class="result-unit">mL/hr</span>
-						</div>
-						<div class="result-item highlight">
-							<span class="result-label">Total</span>
-							<span class="result-value" id="totalRate">42</span>
-							<span class="result-unit">mL/hr</span>
-						</div>
-					</div>
-				</section>
+<!-- Main Content -->
+<main class="main">
 
-				<div class="status-info">
-					<div class="status-row">
-						<span class="status-key">Mode:</span>
-						<select id="roundingSelect" class="select">
-							<option value="nearest" selected>ปัดใกล้สุด</option>
-							<option value="interpolate">คำนวณก้ำกึ่ง</option>
-						</select>
-					</div>
-					<div class="btn-group">
-						<button class="btn-sm" id="copyBtn">📋 Copy</button>
-						<button class="btn-sm" id="printBtn">🖨️ Print</button>
-					</div>
-				</div>
-			</aside>
+<!-- Sidebar -->
+<aside class="sidebar">
 
-			<section class="section">
-				<div class="content-header">
-					<h2 class="content-title"><span class="section-icon">💊</span>ขนาดยา <span id="statusWeight" class="badge">10 kg</span> <span id="statusAge" class="badge">1 ปี</span></h2>
-				</div>
-				<div class="drug-container" id="drugContainer">
-					<!-- ใส่การ์ดยาในอนาคต -->
-				</div>
-			</section>
-		</main>
-	</div>
+<!-- Patient Info Section -->
+<section class="section">
+<h2 class="section-title"><span class="section-icon">👶</span>ข้อมูลผู้ป่วย</h2>
+<div class="form-row">
+<div class="form-field">
+<label for="ageMonths">อายุ</label>
+<div class="input-group">
+<input type="number" id="ageMonths" value="12" min="0" class="input" aria-label="อายุเป็นเดือน">
+<span class="input-addon">เดือน</span>
+</div>
+<small id="ageYears" class="helper-text">= 1 ปี</small>
+</div>
+<div class="form-field">
+<label for="weight">น้ำหนัก</label>
+<div class="input-group">
+<input type="number" id="weight" value="10" min="2" max="60" step="0.5" class="input" aria-label="น้ำหนักกิโลกรัม">
+<span class="input-addon">kg</span>
+</div>
+<input type="range" id="weightSlider" min="2" max="60" step="0.5" value="10" class="slider" aria-label="ปรับน้ำหนัก">
+</div>
+</div>
+<div class="quick-grid">
+<button class="quick-btn" data-weight="3.5" data-age="0">แรกเกิด</button>
+<button class="quick-btn" data-weight="6" data-age="3">3ด</button>
+<button class="quick-btn" data-weight="10" data-age="12">1ป</button>
+<button class="quick-btn" data-weight="15" data-age="36">3ป</button>
+<button class="quick-btn" data-weight="20" data-age="60">5ป</button>
+</div>
+</section>
 
-	<div id="toast" class="toast"></div>
+<!-- IV Fluid Section -->
+<section class="section">
+<h2 class="section-title"><span class="section-icon">💧</span>IV Fluid</h2>
+<div class="form-row">
+<div class="form-field">
+<label for="ivType">Type</label>
+<select id="ivType" class="select" aria-label="ชนิดสารน้ำ">
+<option value="NS">0.9% NaCl</option>
+<option value="LR">LR</option>
+<option value="D5W">D5W</option>
+<option value="D5NS">D5NS</option>
+<option value="D5-1/2NS">D5-½NS</option>
+</select>
+</div>
+<div class="form-field">
+<label for="deficitSlider">Deficit <span id="deficitValue" class="value-badge">0%</span></label>
+<input type="range" id="deficitSlider" min="0" max="15" step="0.5" value="0" class="slider" aria-label="เปอร์เซ็นต์ขาดน้ำ">
+</div>
+<div class="form-field">
+<label for="deficitHours">ชดเชยใน</label>
+<div class="input-group">
+<input type="number" id="deficitHours" value="24" min="1" max="48" class="input" aria-label="ชั่วโมงชดเชย">
+<span class="input-addon">hr</span>
+</div>
+</div>
+</div>
+<div class="iv-results" aria-live="polite">
+<div class="result-item">
+<span class="result-label">Maint</span>
+<span class="result-value" id="maintRate">42</span>
+<span class="result-unit">mL/hr</span>
+</div>
+<div class="result-item">
+<span class="result-label">Deficit</span>
+<span class="result-value" id="deficitRate">0</span>
+<span class="result-unit">mL/hr</span>
+</div>
+<div class="result-item highlight">
+<span class="result-label">Total</span>
+<span class="result-value" id="totalRate">42</span>
+<span class="result-unit">mL/hr</span>
+</div>
+</div>
+</section>
 
-	<script>
-	// ========== LOGO CONFIG ==========
-	// แก้ SVG นี้ให้เป็นโลโก้ของคุณได้เลย
-	const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-		<circle cx="32" cy="20" r="12" fill="#FFB6C1"/>
-		<rect x="24" y="30" width="16" height="20" rx="6" fill="#87CEEB"/>
-		<circle cx="28" cy="16" r="2" fill="#333"/>
-		<circle cx="36" cy="16" r="2" fill="#333"/>
-		<path d="M28 22 Q32 26 36 22" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
-	</svg>`;
+<!-- Status Info -->
+<div class="status-info">
+<div class="status-row">
+<span class="status-key">Mode:</span>
+<span class="status-val" id="roundingStatus">ปัดใกล้สุด</span>
+</div>
+<div class="btn-group">
+<button class="btn-sm" id="copyBtn">📋</button>
+<button class="btn-sm" id="exportBtn">💾</button>
+<button class="btn-sm" id="printBtn">🖨️</button>
+</div>
+</div>
 
-	// ========== Utilities ==========
-	function svgToDataURL(svg) {
-		const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22');
-		return `data:image/svg+xml,${encoded}`;
-	}
-	function dataURLToBlob(dataUrl) {
-		const arr = dataUrl.split(',');
-		const mime = arr[0].match(/:(.*?);/)[1];
-		const bstr = atob(arr[1]);
-		let n = bstr.length;
-		const u8arr = new Uint8Array(n);
-		while (n--) u8arr[n] = bstr.charCodeAt(n);
-		return new Blob([u8arr], { type: mime });
-	}
-	function svgToPngDataURL(svgText, size=180, bg='#FFFFFF') {
-		return new Promise((resolve, reject) => {
-			const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
-			const url = URL.createObjectURL(svgBlob);
-			const img = new Image();
-			img.onload = () => {
-				const c = document.createElement('canvas');
-				c.width = size; c.height = size;
-				const ctx = c.getContext('2d');
-				if (bg) {
-					ctx.fillStyle = bg;
-					ctx.fillRect(0, 0, size, size);
-				}
-				ctx.drawImage(img, 0, 0, size, size);
-				URL.revokeObjectURL(url);
-				resolve(c.toDataURL('image/png'));
-			};
-			img.onerror = reject;
-			img.src = url;
-		});
-	}
+</aside>
 
-	// ========== Manifest Injection (Android/PWA) ==========
-	async function makeManifestBlobURL() {
-		// สร้าง PNG data URL จากโลโก้ SVG สำหรับ 192 และ 512
-		const icon192 = await svgToPngDataURL(LOGO_SVG, 192);
-		const icon512 = await svgToPngDataURL(LOGO_SVG, 512);
+<!-- Content Area -->
+<div class="content">
+<div class="content-header">
+<h2 class="content-title">
+<span class="section-icon">💊</span>ขนาดยา
+<span id="statusWeight" class="badge">10 kg</span>
+<span id="statusAge" class="badge">1 ปี</span>
+</h2>
+<div class="view-toggle">
+<button class="toggle-btn active" data-view="grid">⊞</button>
+<button class="toggle-btn" data-view="list">☰</button>
+</div>
+</div>
+<div class="drug-container grid-view" id="drugContainer">
+<!-- Drug items will be inserted here by JavaScript -->
+</div>
+</div>
 
-		const manifest = {
-			name: "Pediatrics Calculator",
-			short_name: "PedCalc",
-			description: "คำนวณขนาดยาและสารน้ำสำหรับเด็ก",
-			start_url: ".",
-			scope: ".",
-			display: "standalone",
-			background_color: "#FFFFFF",
-			theme_color: "#FFB6C1",
-			icons: [
-				{ src: "", sizes: "192x192", type: "image/png", purpose: "any" },
-				{ src: "", sizes: "512x512", type: "image/png", purpose: "any" },
-				{ src: "", sizes: "192x192", type: "image/png", purpose: "maskable" },
-				{ src: "", sizes: "512x512", type: "image/png", purpose: "maskable" }
-			]
-		};
+</main>
+</div>
 
-		const icon192Blob = dataURLToBlob(icon192);
-		const icon512Blob = dataURLToBlob(icon512);
+<!-- Settings Modal -->
+<div class="modal" id="settingsModal">
+<div class="modal-dialog">
+<div class="modal-header">
+<h3>⚙️ การตั้งค่า</h3>
+<button class="btn-close" id="closeSettings" aria-label="ปิด">✕</button>
+</div>
+<div class="modal-body">
+<div class="setting-row">
+<label for="roundingSelect">วิธีการปัดเศษ</label>
+<select id="roundingSelect" class="select-sm">
+<option value="nearest" selected>ปัดใกล้สุด</option>
+<option value="interpolate">คำนวณก้ำกึ่ง</option>
+</select>
+</div>
+<div class="setting-row">
+<label class="checkbox">
+<input type="checkbox" id="autoSave" checked>
+<span>บันทึกอัตโนมัติ</span>
+</label>
+</div>
+<div class="setting-row">
+<label class="checkbox">
+<input type="checkbox" id="showWarnings" checked>
+<span>แสดงคำเตือน</span>
+</label>
+</div>
+<div class="setting-row">
+<button class="btn-danger" id="clearDataBtn">🗑️ ล้างข้อมูลทั้งหมด</button>
+</div>
+</div>
+</div>
+</div>
 
-		manifest.icons[0].src = URL.createObjectURL(icon192Blob);
-		manifest.icons[1].src = URL.createObjectURL(icon512Blob);
-		manifest.icons[2].src = URL.createObjectURL(icon192Blob);
-		manifest.icons[3].src = URL.createObjectURL(icon512Blob);
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
 
-		const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-		return URL.createObjectURL(blob);
-	}
+<!-- Load JavaScript -->
+<script src="app.js"></script>
 
-	async function injectManifest() {
-		try {
-			const link = document.getElementById('manifestLink');
-			link.href = await makeManifestBlobURL();
-		} catch (e) { console.error('Manifest injection failed', e); }
-	}
-
-	// ========== Apple Touch Icons Injection (iOS) ==========
-	async function injectAppleIcons() {
-		// สร้าง PNG data URL หลายขนาดจาก LOGO_SVG
-		const png180 = await svgToPngDataURL(LOGO_SVG, 180);
-		const png152 = await svgToPngDataURL(LOGO_SVG, 152);
-		const png120 = await svgToPngDataURL(LOGO_SVG, 120);
-		const png76  = await svgToPngDataURL(LOGO_SVG, 76);
-
-		document.getElementById('apple-icon-180').href = png180;
-		document.getElementById('apple-icon-152').href = png152;
-		document.getElementById('apple-icon-120').href = png120;
-		document.getElementById('apple-icon-76').href  = png76;
-	}
-
-	// ========== App logic (Maint + Deficit) ==========
-	const weightEl = document.getElementById('weight');
-	const weightSlider = document.getElementById('weightSlider');
-	const ageMonthsEl = document.getElementById('ageMonths');
-	const ageYearsEl = document.getElementById('ageYears');
-	const deficitSlider = document.getElementById('deficitSlider');
-	const deficitValue = document.getElementById('deficitValue');
-	const deficitHoursEl = document.getElementById('deficitHours');
-	const maintRateEl = document.getElementById('maintRate');
-	const deficitRateEl = document.getElementById('deficitRate');
-	const totalRateEl = document.getElementById('totalRate');
-	const roundingSelect = document.getElementById('roundingSelect');
-	const statusWeight = document.getElementById('statusWeight');
-	const statusAge = document.getElementById('statusAge');
-	const toast = document.getElementById('toast');
-
-	function calcMaintRateKgHr(w) {
-		if (w <= 0) return 0;
-		if (w <= 10) return 4 * w;
-		if (w <= 20) return 40 + 2 * (w - 10);
-		return 60 + 1 * (w - 20);
-	}
-	function calcDeficitRate(kg, deficitPct, hours) {
-		const vol = deficitPct * kg * 10; // mL
-		if (hours <= 0) return 0;
-		return vol / hours; // mL/hr
-	}
-	function roundValue(v) {
-		const mode = roundingSelect?.value || 'nearest';
-		if (mode === 'interpolate') return v;
-		return Math.round(v);
-	}
-	function showToast(msg) {
-		toast.textContent = msg; toast.style.display = 'block';
-		setTimeout(()=> toast.style.display='none', 1600);
-	}
-	function updateAgeHelper() {
-		const m = Number(ageMonthsEl.value || 0);
-		const years = (m/12);
-		ageYearsEl.textContent = `= ${years.toFixed(2)} ปี`;
-		statusAge.textContent = `${Math.round(years)} ปี`;
-	}
-	function updateAll() {
-		const w = parseFloat(weightEl.value || '0');
-		const safeW = Math.min(Math.max(w, 2), 60);
-		if (safeW !== w) weightEl.value = safeW;
-		weightSlider.value = safeW;
-		statusWeight.textContent = `${safeW} kg`;
-
-		const deficitPct = parseFloat(deficitSlider.value || '0');
-		deficitValue.textContent = `${deficitPct}%`;
-
-		const hours = parseFloat(deficitHoursEl.value || '24');
-		const maint = calcMaintRateKgHr(safeW);
-		const deficitR = calcDeficitRate(safeW, deficitPct, hours);
-		const total = maint + deficitR;
-
-		maintRateEl.textContent = roundValue(maint);
-		deficitRateEl.textContent = roundValue(deficitR);
-		totalRateEl.textContent = roundValue(total);
-	}
-
-	['input','change'].forEach(evt=>{
-		weightEl.addEventListener(evt, updateAll);
-		weightSlider.addEventListener(evt, ()=>{ weightEl.value = weightSlider.value; updateAll(); });
-		ageMonthsEl.addEventListener(evt, updateAgeHelper);
-		deficitSlider.addEventListener(evt, updateAll);
-		deficitHoursEl.addEventListener(evt, updateAll);
-		roundingSelect.addEventListener(evt, updateAll);
-	});
-	document.getElementById('copyBtn').addEventListener('click', async ()=>{
-		const text = `Maint: ${maintRateEl.textContent} mL/hr\nDeficit: ${deficitRateEl.textContent} mL/hr\nTotal: ${totalRateEl.textContent} mL/hr`;
-		try { await navigator.clipboard.writeText(text); showToast('Copied'); } catch(e){ showToast('Copy failed'); }
-	});
-	document.getElementById('printBtn').addEventListener('click', ()=> window.print());
-
-	document.querySelectorAll('.quick-btn').forEach(btn=>{
-		btn.addEventListener('click', ()=>{
-			const w = btn.getAttribute('data-weight');
-			const a = btn.getAttribute('data-age');
-			weightEl.value = w; weightSlider.value = w;
-			ageMonthsEl.value = a;
-			updateAgeHelper();
-			updateAll();
-		});
-	});
-
-	// Initial load
-	document.addEventListener('DOMContentLoaded', async ()=>{
-		// Favicon จาก LOGO_SVG เผื่ออยากแทนที่
-		const fav = document.getElementById('favicon');
-		fav.href = svgToDataURL(LOGO_SVG);
-
-		// Inject manifest และ iOS icons
-		await injectManifest();
-		await injectAppleIcons();
-
-		updateAgeHelper();
-		updateAll();
-	});
-	</script>
 </body>
 </html>
