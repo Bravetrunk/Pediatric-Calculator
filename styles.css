@@ -1,7 +1,7 @@
 /* ===== Pediatrics Calculator Styles ===== */
-/* Version: 2.1.0 - Reduced Animations */
+/* Version: 2.2.0 - Complete Single File with Calculator Icon Support */
 
-/* ===== Variables ===== */
+/* ===== CSS Variables & Root ===== */
 :root {
   /* Color Palette */
   --navy: #0B3954;
@@ -50,15 +50,17 @@
   --transition-normal: 0.15s;
 }
 
-/* Dark Theme */
+/* Dark Theme Variables */
 [data-theme="dark"] {
   --bg: var(--navy);
   --bg-alt: #0F4565;
   --text: var(--white);
   --text-light: var(--sky);
+  --text-muted: #7FA9C4;
   --border: #1A5278;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 /* Font Size Variants */
@@ -66,6 +68,7 @@
   --font-base: 13px;
   --font-md: 15px;
   --font-lg: 17px;
+  --font-xl: 20px;
 }
 
 [data-font-size="large"] {
@@ -75,36 +78,44 @@
   --font-xl: 28px;
 }
 
-/* ===== Reset & Base ===== */
+/* ===== Reset & Base Styles ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
   height: 100%;
-  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   font-size: var(--font-base);
   background: var(--bg);
   color: var(--text);
   line-height: 1.4;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
-  -webkit-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== Layout ===== */
+/* ===== Main Layout Structure ===== */
 .app {
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* ===== Header Styles ===== */
 .header {
   height: var(--header-h);
   background: var(--navy);
@@ -114,6 +125,8 @@ body {
   padding: 0 var(--spacing-lg);
   flex-shrink: 0;
   box-shadow: var(--shadow);
+  position: relative;
+  z-index: 100;
 }
 
 .header-left {
@@ -122,26 +135,25 @@ body {
   gap: var(--spacing-sm);
 }
 
-/* Update logo styles */
+/* Calculator Logo Icon */
 .logo {
   width: 32px;
   height: 32px;
   color: var(--coral);
-  filter: drop-shadow(0 2px 4px rgba(255, 102, 99, 0.3));
   stroke: var(--white);
+  filter: drop-shadow(0 2px 4px rgba(255, 102, 99, 0.3));
   transition: transform var(--transition-quick);
+  flex-shrink: 0;
 }
 
 .logo:hover {
   transform: rotate(5deg) scale(1.1);
 }
 
-/* Dark theme logo adjustment */
 [data-theme="dark"] .logo {
   color: var(--lime);
   stroke: var(--coral);
   filter: drop-shadow(0 2px 4px rgba(224, 255, 79, 0.3));
-}
 }
 
 h1 {
@@ -149,6 +161,7 @@ h1 {
   font-weight: 800;
   color: var(--white);
   letter-spacing: -0.5px;
+  margin: 0;
 }
 
 .text-light {
@@ -161,6 +174,7 @@ h1 {
   gap: var(--spacing-xs);
 }
 
+/* Header Buttons */
 .btn-icon {
   width: 32px;
   height: 32px;
@@ -188,6 +202,7 @@ h1 {
   transform: translateY(0);
 }
 
+/* ===== Main Content Layout ===== */
 .main {
   flex: 1;
   display: flex;
@@ -195,6 +210,7 @@ h1 {
   background: var(--bg);
 }
 
+/* ===== Sidebar Styles ===== */
 .sidebar {
   width: var(--sidebar-w);
   background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
@@ -207,6 +223,7 @@ h1 {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Section Cards */
 .section {
   background: var(--white);
   border-radius: var(--radius-lg);
@@ -218,6 +235,11 @@ h1 {
 .section:hover {
   border-color: var(--sky);
   box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .section {
+  background: var(--bg-alt);
+  border-color: var(--border);
 }
 
 .section-title {
@@ -232,12 +254,16 @@ h1 {
   margin-bottom: var(--spacing-sm);
 }
 
+[data-theme="dark"] .section-title {
+  color: var(--white);
+}
+
 .section-icon {
   font-size: var(--font-md);
   filter: saturate(1.5);
 }
 
-/* ===== Forms ===== */
+/* ===== Form Elements ===== */
 .form-row {
   display: grid;
   gap: var(--spacing-sm);
@@ -257,6 +283,11 @@ h1 {
   letter-spacing: 0.5px;
 }
 
+[data-theme="dark"] .form-field label {
+  color: var(--sky);
+}
+
+/* Input Groups */
 .input-group {
   display: flex;
   background: var(--white);
@@ -265,6 +296,11 @@ h1 {
   overflow: hidden;
   height: 32px;
   transition: border-color var(--transition-quick);
+}
+
+[data-theme="dark"] .input-group {
+  background: var(--bg);
+  border-color: var(--border);
 }
 
 .input-group:focus-within {
@@ -285,11 +321,19 @@ h1 {
   -webkit-appearance: none;
 }
 
+[data-theme="dark"] .input {
+  color: var(--white);
+}
+
 /* Remove input spinners */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .input-addon {
@@ -303,6 +347,11 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
 }
 
+[data-theme="dark"] .input-addon {
+  background: var(--coral);
+  color: var(--white);
+}
+
 .helper-text {
   font-size: var(--font-xs);
   color: var(--coral);
@@ -310,8 +359,9 @@ input[type="number"]::-webkit-outer-spin-button {
   font-weight: 600;
 }
 
-.select {
-  height: 32px;
+/* Select Dropdowns */
+.select,
+.select-sm {
   padding: 0 var(--spacing-sm);
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
@@ -329,19 +379,40 @@ input[type="number"]::-webkit-outer-spin-button {
   padding-right: 28px;
 }
 
-.select:hover {
+.select {
+  height: 32px;
+}
+
+.select-sm {
+  height: 28px;
+  width: 100%;
+}
+
+[data-theme="dark"] .select,
+[data-theme="dark"] .select-sm {
+  background-color: var(--bg);
+  color: var(--white);
+  border-color: var(--border);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='<http://www.w3.org/2000/svg>' width='12' height='6'%3E%3Cpath d='M6 6L0 0h12z' fill='%23BFD7EA'/%3E%3C/svg%3E");
+}
+
+.select:hover,
+.select-sm:hover {
   border-color: var(--coral);
 }
 
-.select:focus {
+.select:focus,
+.select-sm:focus {
   border-color: var(--coral);
   box-shadow: 0 0 0 3px rgba(255, 102, 99, 0.1);
 }
 
+/* Range Sliders */
 .slider {
   width: 100%;
   height: 6px;
   -webkit-appearance: none;
+  appearance: none;
   background: var(--border);
   border-radius: 3px;
   outline: none;
@@ -350,6 +421,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   width: 18px;
   height: 18px;
   background: var(--lime);
@@ -371,9 +443,10 @@ input[type="number"]::-webkit-outer-spin-button {
   border: 2px solid var(--navy);
   border-radius: 50%;
   cursor: pointer;
+  box-shadow: var(--shadow);
 }
 
-/* ===== Quick Buttons ===== */
+/* ===== Quick Buttons Grid ===== */
 .quick-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -394,6 +467,12 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-tap-highlight-color: transparent;
 }
 
+[data-theme="dark"] .quick-btn {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--white);
+}
+
 .quick-btn:hover {
   background: var(--coral);
   border-color: var(--coral);
@@ -405,7 +484,7 @@ input[type="number"]::-webkit-outer-spin-button {
   transform: scale(0.95);
 }
 
-/* ===== IV Results ===== */
+/* ===== IV Fluid Results ===== */
 .iv-results {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -422,6 +501,11 @@ input[type="number"]::-webkit-outer-spin-button {
   transition: all var(--transition-quick);
 }
 
+[data-theme="dark"] .result-item {
+  background: var(--bg);
+  border-color: var(--border);
+}
+
 .result-item:hover {
   border-color: var(--sky);
   transform: translateY(-1px);
@@ -433,6 +517,11 @@ input[type="number"]::-webkit-outer-spin-button {
   box-shadow: 0 2px 8px rgba(224, 255, 79, 0.3);
 }
 
+[data-theme="dark"] .result-item.highlight {
+  background: linear-gradient(135deg, rgba(224, 255, 79, 0.2), var(--bg));
+  border-color: var(--lime);
+}
+
 .result-label {
   display: block;
   font-size: 10px;
@@ -442,11 +531,19 @@ input[type="number"]::-webkit-outer-spin-button {
   opacity: 0.7;
 }
 
+[data-theme="dark"] .result-label {
+  color: var(--sky);
+}
+
 .result-value {
   font-size: var(--font-md);
   font-weight: 800;
   color: var(--navy);
   line-height: 1;
+}
+
+[data-theme="dark"] .result-value {
+  color: var(--white);
 }
 
 .result-unit {
@@ -455,7 +552,7 @@ input[type="number"]::-webkit-outer-spin-button {
   font-weight: 600;
 }
 
-/* ===== Status Info ===== */
+/* ===== Status Info Panel ===== */
 .status-info {
   margin-top: auto;
   padding: var(--spacing-sm);
@@ -530,6 +627,11 @@ input[type="number"]::-webkit-outer-spin-button {
   flex-shrink: 0;
 }
 
+[data-theme="dark"] .content-header {
+  background: var(--bg-alt);
+  border-color: var(--border);
+}
+
 .content-title {
   font-size: var(--font-md);
   font-weight: 700;
@@ -538,6 +640,10 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
   gap: var(--spacing-sm);
   margin: 0;
+}
+
+[data-theme="dark"] .content-title {
+  color: var(--white);
 }
 
 .badge {
@@ -550,6 +656,11 @@ input[type="number"]::-webkit-outer-spin-button {
   box-shadow: 0 2px 4px rgba(224, 255, 79, 0.3);
 }
 
+[data-theme="dark"] .badge {
+  background: var(--coral);
+  color: var(--white);
+}
+
 .value-badge {
   padding: 2px 6px;
   background: var(--lime);
@@ -560,6 +671,7 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-left: var(--spacing-xs);
 }
 
+/* View Toggle Buttons */
 .view-toggle {
   display: flex;
   background: var(--navy);
@@ -578,6 +690,7 @@ input[type="number"]::-webkit-outer-spin-button {
   transition: all var(--transition-quick);
   color: var(--white);
   border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
 }
 
 .toggle-btn.active {
@@ -590,7 +703,7 @@ input[type="number"]::-webkit-outer-spin-button {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ===== Drug Container ===== */
+/* ===== Drug Container & Items ===== */
 .drug-container {
   flex: 1;
   overflow-y: auto;
@@ -607,6 +720,7 @@ input[type="number"]::-webkit-outer-spin-button {
   align-content: start;
 }
 
+/* Drug Item Card */
 .drug-item {
   padding: var(--spacing-sm);
   background: var(--white);
@@ -617,6 +731,11 @@ input[type="number"]::-webkit-outer-spin-button {
   position: relative;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
+}
+
+[data-theme="dark"] .drug-item {
+  background: var(--bg-alt);
+  border-color: var(--border);
 }
 
 .drug-item::before {
@@ -655,11 +774,19 @@ input[type="number"]::-webkit-outer-spin-button {
   white-space: nowrap;
 }
 
+[data-theme="dark"] .drug-name {
+  color: var(--white);
+}
+
 .drug-info {
   font-size: 10px;
   color: var(--text-muted);
   margin-bottom: var(--spacing-xs);
   font-weight: 600;
+}
+
+[data-theme="dark"] .drug-info {
+  color: var(--sky);
 }
 
 .drug-dose-display {
@@ -672,6 +799,10 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-bottom: 4px;
 }
 
+[data-theme="dark"] .drug-dose-display {
+  background: rgba(191, 215, 234, 0.2);
+}
+
 .dose-number {
   font-size: var(--font-xl);
   font-weight: 800;
@@ -679,11 +810,19 @@ input[type="number"]::-webkit-outer-spin-button {
   line-height: 1;
 }
 
+[data-theme="dark"] .dose-number {
+  color: var(--lime);
+}
+
 .dose-unit {
   font-size: var(--font-xs);
   color: var(--navy);
   margin-left: 2px;
   font-weight: 700;
+}
+
+[data-theme="dark"] .dose-unit {
+  color: var(--sky);
 }
 
 .drug-frequency {
@@ -741,7 +880,7 @@ input[type="number"]::-webkit-outer-spin-button {
   justify-content: flex-end;
 }
 
-/* ===== Modal ===== */
+/* ===== Modal Styles ===== */
 .modal {
   display: none;
   position: fixed;
@@ -756,6 +895,12 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .modal.show {
   display: flex;
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-dialog {
@@ -767,6 +912,23 @@ input[type="number"]::-webkit-outer-spin-button {
   border: 2px solid var(--coral);
   transform: scale(1);
   opacity: 1;
+  animation: slideUp var(--transition-normal) ease-out;
+}
+
+[data-theme="dark"] .modal-dialog {
+  background: var(--bg-alt);
+  border-color: var(--coral);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .modal-header {
@@ -810,8 +972,16 @@ input[type="number"]::-webkit-outer-spin-button {
   padding: var(--spacing-md);
 }
 
+[data-theme="dark"] .modal-body {
+  background: var(--bg-alt);
+}
+
 .setting-row {
   margin-bottom: var(--spacing-md);
+}
+
+.setting-row:last-child {
+  margin-bottom: 0;
 }
 
 .setting-row label {
@@ -822,21 +992,8 @@ input[type="number"]::-webkit-outer-spin-button {
   margin-bottom: var(--spacing-xs);
 }
 
-.select-sm {
-  width: 100%;
-  height: 28px;
-  padding: 0 var(--spacing-sm);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--white);
-  font-size: var(--font-sm);
-  color: var(--navy);
-  cursor: pointer;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='<http://www.w3.org/2000/svg>' width='12' height='6'%3E%3Cpath d='M6 6L0 0h12z' fill='%230B3954'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  padding-right: 28px;
+[data-theme="dark"] .setting-row label {
+  color: var(--sky);
 }
 
 .checkbox {
@@ -846,6 +1003,10 @@ input[type="number"]::-webkit-outer-spin-button {
   cursor: pointer;
   font-size: var(--font-sm);
   color: var(--navy);
+}
+
+[data-theme="dark"] .checkbox {
+  color: var(--white);
 }
 
 .checkbox input {
@@ -873,7 +1034,7 @@ input[type="number"]::-webkit-outer-spin-button {
   box-shadow: var(--shadow-lg);
 }
 
-/* ===== Toast ===== */
+/* ===== Toast Notification ===== */
 .toast {
   position: fixed;
   bottom: var(--spacing-lg);
@@ -888,19 +1049,32 @@ input[type="number"]::-webkit-outer-spin-button {
   transform: translateX(400px);
   transition: transform var(--transition-normal) ease-out;
   z-index: 2000;
+  max-width: 300px;
 }
 
 .toast.show {
   transform: translateX(0);
 }
 
-/* ===== Value Update Animation (Reduced) ===== */
+/* ===== Utility Classes ===== */
 .updating {
   opacity: 0.7;
   transition: opacity var(--transition-quick);
 }
 
-/* ===== Scrollbar ===== */
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ===== Scrollbar Styling ===== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -920,134 +1094,48 @@ input[type="number"]::-webkit-outer-spin-button {
   background: linear-gradient(180deg, var(--coral), var(--sky));
 }
 
-/* ===== Dark Theme Adjustments ===== */
-[data-theme="dark"] .section {
-  background: var(--bg-alt);
-  border-color: var(--border);
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--coral) var(--bg-alt);
 }
 
-[data-theme="dark"] .drug-item {
-  background: var(--bg-alt);
-  border-color: var(--border);
+/* ===== Focus States ===== */
+:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 2px;
 }
 
-[data-theme="dark"] .drug-name {
-  color: var(--white);
+button:focus-visible,
+.btn-icon:focus-visible,
+.btn-sm:focus-visible {
+  outline-offset: 0;
 }
 
-[data-theme="dark"] .drug-info {
-  color: var(--sky);
-}
+/* ===== Responsive Design ===== */
 
-[data-theme="dark"] .drug-dose-display {
-  background: rgba(191, 215, 234, 0.2);
-}
-
-[data-theme="dark"] .dose-number {
-  color: var(--lime);
-}
-
-[data-theme="dark"] .dose-unit {
-  color: var(--sky);
-}
-
-[data-theme="dark"] .content-header {
-  background: var(--bg-alt);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .content-title {
-  color: var(--white);
-}
-
-[data-theme="dark"] .badge {
-  background: var(--coral);
-  color: var(--white);
-}
-
-[data-theme="dark"] .modal-dialog {
-  background: var(--bg-alt);
-  border-color: var(--coral);
-}
-
-[data-theme="dark"] .modal-body {
-  background: var(--bg-alt);
-}
-
-[data-theme="dark"] .input-group {
-  background: var(--bg);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .input {
-  color: var(--white);
-}
-
-[data-theme="dark"] .select {
-  background: var(--bg);
-  color: var(--white);
-  border-color: var(--border);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='<http://www.w3.org/2000/svg>' width='12' height='6'%3E%3Cpath d='M6 6L0 0h12z' fill='%23BFD7EA'/%3E%3C/svg%3E");
-}
-
-[data-theme="dark"] .select-sm {
-  background: var(--bg);
-  color: var(--white);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='<http://www.w3.org/2000/svg>' width='12' height='6'%3E%3Cpath d='M6 6L0 0h12z' fill='%23BFD7EA'/%3E%3C/svg%3E");
-}
-
-[data-theme="dark"] .quick-btn {
-  background: var(--bg);
-  border-color: var(--border);
-  color: var(--white);
-}
-
-[data-theme="dark"] .quick-btn:hover {
-  background: var(--coral);
-  border-color: var(--coral);
-}
-
-[data-theme="dark"] .result-item {
-  background: var(--bg);
-  border-color: var(--border);
-}
-
-[data-theme="dark"] .result-item.highlight {
-  background: linear-gradient(135deg, rgba(224, 255, 79, 0.2), var(--bg));
-  border-color: var(--lime);
-}
-
-[data-theme="dark"] .result-value {
-  color: var(--white);
-}
-
-[data-theme="dark"] .result-label {
-  color: var(--sky);
-}
-
-[data-theme="dark"] .checkbox {
-  color: var(--white);
-}
-
-[data-theme="dark"] .setting-row label {
-  color: var(--sky);
-}
-
-/* ===== Responsive ===== */
+/* Tablet - Landscape */
 @media (max-width: 1024px) {
   :root {
     --sidebar-w: 280px;
+    --header-h: 44px;
   }
 
   .drug-container.grid-view {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
+
+  h1 {
+    font-size: calc(var(--font-lg) - 2px);
+  }
 }
 
+/* Tablet - Portrait */
 @media (max-width: 768px) {
   :root {
-    --header-h: 44px;
     --sidebar-w: 100%;
+    --spacing-md: 10px;
+    --spacing-lg: 14px;
   }
 
   .main {
@@ -1059,6 +1147,7 @@ input[type="number"]::-webkit-outer-spin-button {
     border-right: none;
     border-bottom: 2px solid var(--border);
     max-height: 40vh;
+    padding: var(--spacing-sm);
   }
 
   .quick-grid {
@@ -1072,20 +1161,80 @@ input[type="number"]::-webkit-outer-spin-button {
   .badge {
     display: none;
   }
+
+  .content-header {
+    padding: var(--spacing-sm);
+  }
 }
 
+/* Mobile - Large */
 @media (max-width: 480px) {
+  :root {
+    --font-base: 14px;
+    --font-md: 16px;
+    --font-lg: 18px;
+    --font-xl: 22px;
+  }
+
   h1 span {
     display: none;
+  }
+
+  .header {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
 
   .drug-container.grid-view {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
+    padding: var(--spacing-sm);
   }
 
   .dose-number {
     font-size: var(--font-md);
+  }
+
+  .iv-results {
+    grid-template-columns: 1fr;
+  }
+
+  .toast {
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+    left: var(--spacing-sm);
+    transform: translateY(100px);
+  }
+
+  .toast.show {
+    transform: translateY(0);
+  }
+}
+
+/* Mobile - Small */
+@media (max-width: 360px) {
+  :root {
+    --font-base: 13px;
+    --font-sm: 11px;
+    --font-xs: 10px;
+  }
+
+  .quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .drug-container.grid-view {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1096,54 +1245,160 @@ input[type="number"]::-webkit-outer-spin-button {
   .slider,
   .btn-group,
   .view-toggle,
-  .modal {
+  .modal,
+  .toast {
     display: none !important;
   }
 
   body {
     background: white;
     color: var(--navy);
+    font-size: 12pt;
+  }
+
+  .app {
+    height: auto;
+  }
+
+  .header {
+    position: relative;
+    page-break-after: avoid;
+    background: white;
+    color: var(--navy);
+    border-bottom: 2px solid var(--navy);
+  }
+
+  .header h1 {
+    color: var(--navy);
+  }
+
+  .logo {
+    color: var(--coral);
+    stroke: var(--navy);
+  }
+
+  .main {
+    display: block;
   }
 
   .sidebar {
     width: 100%;
     border: 1px solid var(--navy);
-    page-break-after: avoid;
+    page-break-after: always;
+    background: white;
+    max-height: none;
+  }
+
+  .content {
+    page-break-before: always;
   }
 
   .drug-container {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px;
+    background: white !important;
   }
 
   .drug-item {
     border: 1px solid var(--navy);
     page-break-inside: avoid;
+    background: white !important;
+  }
+
+  .drug-item::before {
+    display: none;
+  }
+
+  .section {
+    border: 1px solid var(--navy);
+    background: white !important;
   }
 }
 
-/* ===== Focus States ===== */
-:focus-visible {
-  outline: 2px solid var(--coral);
-  outline-offset: 2px;
+/* ===== Reduced Motion Accessibility ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .logo:hover {
+    transform: none;
+  }
+
+  .drug-item:hover {
+    transform: none;
+  }
 }
 
-/* ===== Reduced Motion ===== */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+/* ===== High Contrast Mode ===== */
+@media (prefers-contrast: high) {
+  :root {
+    --border: #000;
+    --shadow: 0 0 0 1px #000;
+    --shadow-lg: 0 0 0 2px #000;
+  }
+
+  .drug-item,
+  .section,
+  .input-group,
+  .select {
+    border-width: 3px;
   }
 }
 
 /* ===== iOS Specific Fixes ===== */
 @supports (-webkit-touch-callout: none) {
-  /* iOS Safari */
-  .input, .select {
+  /* iOS Safari specific styles */
+  .input,
+  .select,
+  .select-sm {
     font-size: 16px; /* Prevent zoom on focus */
   }
 
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
   }
+
+  /* Fix for iOS safe area */
+  .app {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .header {
+    padding-left: max(var(--spacing-lg), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-lg), env(safe-area-inset-right));
+  }
 }
+
+/* ===== Android Specific ===== */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select:focus,
+  textarea:focus,
+  input:focus {
+    font-size: 16px;
+  }
+}
+
+/* ===== Loading Animation ===== */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading {
+  animation: pulse 1.5s infinite;
+}
+
+/* ===== Custom Properties for JavaScript ===== */
+.drug-item[data-color] {
+  border-top-color: var(--primary);
+}
+
+/* ===== End of Styles ===== */
