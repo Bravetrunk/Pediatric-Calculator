@@ -1,6 +1,5 @@
 // ===== Pediatrics Calculator - Main Application =====
-// Version: 2.1.0
-// Optimized for performance and user experience
+// Version: 2.1.0 - Optimized with reduced animations
 
 (function () {
   'use strict';
@@ -22,10 +21,11 @@
       autoSave: true,
       showWarnings: true
     },
+    // Reduced animation durations
     animation: {
-      quick: 150,
-      normal: 250,
-      slow: 500
+      quick: 50,
+      normal: 100,
+      slow: 200
     }
   };
 
@@ -69,7 +69,26 @@
       this.bindEvents();
       this.updateAll();
       this.initKeyboardShortcuts();
+      this.setupIOSFixes();
       console.log(`PedCalc v${CONFIG.version} initialized`);
+    }
+
+    setupIOSFixes() {
+      // Prevent double-tap zoom on iOS
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function (event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+
+      // Fix viewport on iOS
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (viewport && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+      }
     }
 
     cacheDOMElements() {
@@ -128,15 +147,15 @@
         if (el) el.addEventListener(event, handler.bind(this));
       };
 
-      // Patient inputs
-      on(this.els.ageMonths, 'input', this.debounce(this.handleAgeChange, 300));
-      on(this.els.weight, 'input', this.debounce(this.handleWeightInput, 300));
+      // Patient inputs with reduced debounce
+      on(this.els.ageMonths, 'input', this.debounce(this.handleAgeChange, 150));
+      on(this.els.weight, 'input', this.debounce(this.handleWeightInput, 150));
       on(this.els.weightSlider, 'input', this.handleWeightSlider);
 
       // IV inputs
       on(this.els.ivType, 'change', this.handleIVChange);
       on(this.els.deficitSlider, 'input', this.handleDeficitChange);
-      on(this.els.deficitHours, 'input', this.debounce(this.handleDeficitHours, 300));
+      on(this.els.deficitHours, 'input', this.debounce(this.handleDeficitHours, 150));
 
       // Quick buttons
       this.quickBtns.forEach(btn => {
@@ -173,6 +192,11 @@
       // Save on tab hide
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) this.saveState();
+      });
+
+      // iOS specific: prevent zoom on double tap
+      document.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
       });
     }
 
@@ -337,7 +361,8 @@
       this.els.weightSlider.value = weight;
       this.els.ageMonths.value = age;
 
-      btn.style.transform = 'scale(0.9)';
+      // Quick visual feedback
+      btn.style.transform = 'scale(0.95)';
       setTimeout(() => btn.style.transform = '', CONFIG.animation.quick);
 
       this.updateAll();
@@ -514,16 +539,19 @@
       const container = this.els.drugContainer;
       container.className = `drug-container ${this.state.viewMode}-view`;
 
-      const fragment = document.createDocumentFragment();
+      // Use requestAnimationFrame for smooth rendering
+      requestAnimationFrame(() => {
+        const fragment = document.createDocumentFragment();
 
-      DRUGS.forEach((drug, idx) => {
-        const result = this.calculateDose(drug, this.state.weight, this.state.ageMonths);
-        const el = this.createDrugElement(drug, result, idx);
-        fragment.appendChild(el);
+        DRUGS.forEach((drug, idx) => {
+          const result = this.calculateDose(drug, this.state.weight, this.state.ageMonths);
+          const el = this.createDrugElement(drug, result, idx);
+          fragment.appendChild(el);
+        });
+
+        container.innerHTML = '';
+        container.appendChild(fragment);
       });
-
-      container.innerHTML = '';
-      container.appendChild(fragment);
     }
 
     updateStatus() {
@@ -546,7 +574,7 @@
         div.style.background = `linear-gradient(135deg, ${drug.color}, var(--bg))`;
       }
 
-      div.style.animationDelay = `${index * 20}ms`;
+      // Removed animation delay for faster rendering
 
       const freq = drug.times ? `${drug.times}x/วัน` : 'PRN';
       const dose = (result.dose ?? 0).toFixed(1);
@@ -768,7 +796,7 @@
       }
     }
 
-    toast(message, duration = 2000) {
+    toast(message, duration = 1500) {
       clearTimeout(this.timers.toast);
       if (!this.els.toast) return;
       this.els.toast.textContent = message;
