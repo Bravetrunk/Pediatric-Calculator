@@ -122,11 +122,26 @@ body {
   gap: var(--spacing-sm);
 }
 
+/* Update logo styles */
 .logo {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   color: var(--coral);
   filter: drop-shadow(0 2px 4px rgba(255, 102, 99, 0.3));
+  stroke: var(--white);
+  transition: transform var(--transition-quick);
+}
+
+.logo:hover {
+  transform: rotate(5deg) scale(1.1);
+}
+
+/* Dark theme logo adjustment */
+[data-theme="dark"] .logo {
+  color: var(--lime);
+  stroke: var(--coral);
+  filter: drop-shadow(0 2px 4px rgba(224, 255, 79, 0.3));
+}
 }
 
 h1 {
